@@ -1,11 +1,4 @@
-/* =============================================================
-   MODUL 11 — SHADOW DOM, SLOT & EVENT
-   style.css — Halaman Profil Diri
-   ============================================================= */
-
-/* ===== Modul 11: CSS Custom Properties (Tugas Mandiri 3) =====
-   Custom property menembus batas Shadow DOM sehingga menjadi
-   jalur resmi untuk memberi tema pada komponen dari luar. */
+/* ===== Modul 11: CSS Custom Properties =====*/
 :root {
   --kartu-garis: #ddd;
   --kartu-latar: transparent;
@@ -23,10 +16,7 @@
   --komentar-nama: #1f4e78;
 }
 
-/* ===== Modul 11: ::part() — Gaya tombol di dalam shadow tree =====
-   Tombol Like dan Hapus diatur dari halaman lewat pseudo-element ::part().
-   Ini adalah jalur opsional (selain custom property) untuk menata
-   elemen spesifik di dalam shadow tree. */
+/* ===== Modul 11: ::part() — Gaya tombol di dalam shadow tree =====*/
 kartu-artikel::part(tombol-like) {
   border-color: #1f4e78;
   color: #1f4e78;
@@ -106,9 +96,7 @@ input :valid {
 }
 
 
-/* ===== Dark Mode (Modul 3) =====
-   Modul 11: Custom property SENGAJA bisa menembus batas shadow tree,
-   sehingga saat mode gelap aktif, komponen ikut berubah tema. */
+/* ===== Dark Mode (Modul 3) ==== */
 body.dark-mode {
   --kartu-garis: #555;
   --kartu-latar: #242424;
@@ -471,7 +459,6 @@ footer {
 
 
 /* ===== Media Query Mobile-First ===== */
-
 /* Tablet: >= 768px */
 @media (min-width: 768px) {
   .daftar-artikel {
@@ -862,7 +849,6 @@ body.dark-mode .profil-api-box {
 body.dark-mode .profil-api-box h3 {
   color: #add8e6;
 }
-
 
 /* ===== Indikator Loading pada Tombol ===== */
 button:disabled,
