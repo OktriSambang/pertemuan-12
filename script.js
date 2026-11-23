@@ -1,21 +1,4 @@
 "use strict";
-/* ==========================================================================
-   MODUL 11 — SHADOW DOM, SLOT & EVENT
-   Bagian B — Kegiatan Praktikum : script.js
-   Mata Kuliah: Pemrograman Berbasis Web (PROG31W)
-
-   Program KUMULATIF (melanjutkan Modul 3-10), DENGAN perubahan Modul 11:
-     - muatArtikelDariAPI() DIHAPUS: pengambilan data kini dilakukan oleh
-       <daftar-artikel> (komponen.js).
-     - Halaman MENDENGARKAN CustomEvent dari komponen: "suka",
-       "hapus-artikel", "artikel-dimuat", "hapus-komentar", "edit-komentar".
-     - Like disimpan ke localStorage lewat event "suka" dan dipulihkan
-       saat event "artikel-dimuat" diterima (Tugas Mandiri 1).
-     - Komentar dirender sebagai <kartu-komentar> Shadow DOM dengan slot
-       nama & pesan (Tugas Mandiri 2).
-   Komponen didefinisikan di komponen.js (ditautkan sebelum file ini).
-   ========================================================================== */
-
 const BASE = "https://jsonplaceholder.typicode.com";
 
 /*MODUL 9 · B.6 — FUNGSI pesanDariStatus()*/
@@ -130,11 +113,9 @@ if (tombolKontak && sectionKontak) {
 
 
 /* ===================== MODUL 11 — EVENT DARI <kartu-artikel> ===================== */
-// <daftar-artikel> (komponen.js) mengambil data sendiri. Halaman hanya
-// MENDENGARKAN event dengan satu listener pada container (event delegation).
 const wadah = document.querySelector(".daftar-artikel");
 
-// Tugas Mandiri 1: Jumlah like per artikel disimpan di localStorage
+// Jumlah like per artikel disimpan di localStorage
 function ambilLike() { return JSON.parse(localStorage.getItem("like")) || {}; }
 function simpanLike(obj) { localStorage.setItem("like", JSON.stringify(obj)); }
 
@@ -171,7 +152,7 @@ if (wadah) {
     });
 }
 
-// Form Tambah Pengalaman — kini membuat <kartu-artikel> dengan slot
+// Form Tambah Pengalaman -membuat <kartu-artikel> dengan slot
 const tombolTambah = document.querySelector("#btn-tambah");
 const formPengalaman = document.querySelector("#form-pengalaman");
 
@@ -318,8 +299,7 @@ if (btnBatalEdit) {
     btnBatalEdit.addEventListener("click", batalkanModeEdit);
 }
 
-/* Modul 11: Membuat <kartu-komentar> dengan SLOT.
-   Nama masuk ke slot "nama", pesan ke slot default. */
+/* Modul 11: Membuat <kartu-komentar> dengan SLOT. */
 function buatElemenKomentar(nama, pesan, id) {
     const kartu = document.createElement("kartu-komentar");
     if (id !== undefined && id !== null) {
@@ -398,8 +378,7 @@ muatKomentar();
 muatKomentarDariAPI();
 
 
-/* EVENT DELEGATION UNTUK <kartu-komentar> (hapus & edit via CustomEvent)
-   Modul 11: Tombol Hapus/Edit kini di dalam shadow tree, jadi halaman
+/* Modul 11: Tombol Hapus/Edit kini di dalam shadow tree, jadi halaman
    mendengarkan CustomEvent, bukan event "click" biasa. */
 if (daftarKomentar) {
     // Tangani event hapus-komentar yang di-dispatch dari dalam komponen
@@ -422,8 +401,7 @@ if (daftarKomentar) {
             }
         }
 
-        // Modul 11: komponen tidak menghapus dirinya sendiri,
-        // halaman yang memutuskan untuk menghapus.
+        // Modul 11: komponen tidak menghapus dirinya sendiri
         kartu.remove();
         sembunyikanErrorKomentar();
     });
@@ -448,8 +426,6 @@ if (daftarKomentar) {
         if (inputNama) inputNama.focus();
     });
 }
-
-
 /* PROFIL PENULIS DINAMIS DARI ENDPOINT /users/1 */
 async function muatProfilPenulis() {
     const namaEl = document.querySelector("#nama-penulis");
@@ -471,10 +447,7 @@ async function muatProfilPenulis() {
     }
 }
 muatProfilPenulis();
-
-
 /* DRAFT KOMENTAR DENGAN SESSIONSTORAGE */
-
 function simpanDraftKomentar() {
     try {
         const draft = {
@@ -515,7 +488,6 @@ if (inputPesan) {
     inputPesan.addEventListener("input", simpanDraftKomentar);
 }
 muatDraftKomentar();
-
 
 /* HANDLER SUBMIT FORM KOMENTAR (POST baru & PATCH edit) */
 if (formKomentar && daftarKomentar) {
