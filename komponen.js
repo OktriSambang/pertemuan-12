@@ -1,31 +1,4 @@
 "use strict";
-
-/* =============================================================
-   MODUL 11 — SHADOW DOM, SLOT & EVENT
-   Bagian B — Kegiatan Praktikum : komponen.js
-   Mata Kuliah: Pemrograman Berbasis Web (PROG31W)
-
-   Berisi definisi custom element. Ditautkan SEBELUM script.js di
-   index.html agar komponen sudah terdaftar saat script.js berjalan.
-
-   Komponen:
-     <salam-pengguna>   (tetap dari Modul 10, tanpa Shadow DOM)
-     <kartu-artikel>    (Shadow DOM, template, slot, CustomEvent "suka"
-                         dan "hapus-artikel")
-     <tombol-tema>      (Shadow DOM, CustomEvent "ganti-tema")
-     <kartu-komentar>   (Shadow DOM, slot nama & pesan,
-                         CustomEvent "hapus-komentar" & "edit-komentar")
-     <daftar-artikel>   (mengambil data dari API, menyusun kartu)
-
-   Prinsip Modul 11:
-     - Struktur dan gaya komponen TERISOLASI di dalam shadow tree.
-     - Data dikirim ke komponen lewat SLOT (konten) dan ATRIBUT (nilai kecil).
-     - Komponen TIDAK memutuskan apa yang terjadi setelah aksi pengguna;
-       ia hanya MENGIRIM EVENT, halaman (script.js) yang menanganinya.
-   ============================================================= */
-
-
-/* ---------- <salam-pengguna> (dari Modul 10, tidak berubah) ---------- */
 class SalamPengguna extends HTMLElement {
   connectedCallback() {
     const nama = this.getAttribute("nama") || "Tamu";
@@ -35,11 +8,7 @@ class SalamPengguna extends HTMLElement {
 customElements.define("salam-pengguna", SalamPengguna);
 
 
-/* ---------- Template <kartu-artikel> ----------
-   Template dibuat SEKALI lalu di-clone untuk setiap kartu.
-   <style> di dalam template hanya berlaku di dalam shadow tree.
-   Custom property (var(--...)) adalah satu-satunya "pintu" gaya
-   dari halaman ke dalam shadow tree.                              */
+/* ---------- Template <kartu-artikel> ---------- */
 const templateKartu = document.createElement("template");
 templateKartu.innerHTML = `
   <style>
@@ -105,8 +74,6 @@ class KartuArtikel extends HTMLElement {
 
   constructor() {
     super();
-    // Shadow tree dan listener dibuat SEKALI di constructor, sehingga tidak
-    // terpasang ganda ketika elemen dipindahkan (connectedCallback berulang).
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(templateKartu.content.cloneNode(true));
 
@@ -114,7 +81,6 @@ class KartuArtikel extends HTMLElement {
     this.#tombolLike.addEventListener("click", () => {
       this.#like++;
       this.#perbaruiTombolLike();
-      // Beri tahu halaman. bubbles + composed: event menembus batas shadow.
       this.dispatchEvent(new CustomEvent("suka", {
         detail: { jumlah: this.#like },
         bubbles: true,
@@ -208,9 +174,7 @@ class TombolTema extends HTMLElement {
 customElements.define("tombol-tema", TombolTema);
 
 
-/* ---------- Template <kartu-komentar> (Shadow DOM + Slot) ----------
-   Slot bernama "nama" untuk nama pengirim, slot default untuk pesan.
-   Tombol Hapus mengirim event "hapus-komentar"; halaman yang menangani. */
+/* ---------- Template <kartu-komentar> (Shadow DOM + Slot) ----------*/
 const templateKomentar = document.createElement("template");
 templateKomentar.innerHTML = `
   <style>
@@ -308,9 +272,7 @@ class KartuKomentar extends HTMLElement {
 customElements.define("kartu-komentar", KartuKomentar);
 
 
-/* ---------- <daftar-artikel> dari API ----------
-   Mengambil data dari API lalu menyusun banyak <kartu-artikel>.
-   Judul dan isi dikirim lewat SLOT (elemen anak di light DOM). */
+/* ---------- <daftar-artikel> dari API ---------- */
 function buatKartu(post) {
   const kartu = document.createElement("kartu-artikel");
   kartu.dataset.id = post.id;
@@ -319,7 +281,7 @@ function buatKartu(post) {
   judul.slot = "judul";                 // masuk ke <slot name="judul">
   judul.textContent = post.title;       // textContent: aman dari XSS
 
-  const isi = document.createElement("p");  // tanpa slot -> <slot> default
+  const isi = document.createElement("p");  //  <slot> default
   isi.textContent = post.body;
 
   kartu.append(judul, isi);
@@ -346,7 +308,7 @@ class DaftarArtikel extends HTMLElement {
 
       this.replaceChildren(...data.map(buatKartu));
 
-      // Beri tahu halaman bahwa kartu sudah siap (mis. untuk memulihkan like)
+      // Beri tahu halaman bahwa kartu sudah siap
       this.dispatchEvent(new CustomEvent("artikel-dimuat", {
         detail: { jumlah: data.length },
         bubbles: true,
